@@ -24,6 +24,7 @@ class StarPainter extends CustomPainter {
 
     for (var star in stars) {
       _drawStar(canvas, star.position, star.radius, starPaint);
+
     }
 
     canvas.drawPath(path, pathPaint);

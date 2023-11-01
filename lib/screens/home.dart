@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:path_game/painters/square_painter.dart';
 import 'package:path_game/painters/star_painter.dart';
 
 import '../models/star.dart';
@@ -17,34 +16,82 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Star> stars = [];
   Path path = Path();
+  @override
+  void initState() {
+    super.initState();
+
+  }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Size screenSize = MediaQuery.of(context).size;
+    Offset center = Offset(screenSize.width / 2, screenSize.height / 2);
+    if (stars.isEmpty) {
+      stars = generateStarsAroundCenter(center, 5, 150.0);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     Offset center = Offset(screenSize.width / 2, screenSize.height / 2);
-    stars = generateStarsAroundCenter(center, 5, 150.0);
     return Scaffold(
       body: Row(
         children: [
-            CustomPaint(
-              painter: StarPainter(stars: stars, path: path, center: center),
-
+          GestureDetector(
+            onPanStart: _onPanStart,
+            onPanUpdate: _onPanUpdate,
+            child: Container(
+              width: screenSize.width,  // o un valor fijo como 300
+              height: screenSize.height, // o un valor fijo como 300
+              child: CustomPaint(
+                painter: StarPainter(stars: stars, path: path, center: center),
+              ),
             ),
+          )
+,
 
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Stack(
+          children: [
+            Container(
+              height: 60,
+              color: Colors.blue,
+            ),
+            Container(
+              height: 60,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.home),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: IconButton(
+                      icon: Icon(Icons.undo_sharp),
+                      onPressed: () {
+                        setState(() {
+                          print('undo');
+                          path.reset();
+                      });
+                      },
+
+
+                    ),
+
+                  ),
+
+                ],
+              ),
+            ),
+          ],
+        )
+        ),
+
     );
   }
 
@@ -65,4 +112,17 @@ class _HomeState extends State<Home> {
 
     return stars;
   }
+
+  void _onPanStart(DragStartDetails details) {
+    setState(() {
+      path.moveTo(details.localPosition.dx, details.localPosition.dy);
+    });
+  }
+
+  void _onPanUpdate(DragUpdateDetails details) {
+    setState(() {
+      path.lineTo(details.localPosition.dx, details.localPosition.dy);
+    });
+  }
+
 }
