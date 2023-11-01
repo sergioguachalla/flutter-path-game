@@ -7,8 +7,9 @@ import '../models/star.dart';
 class StarPainter extends CustomPainter {
   final List<Star> stars;
   final Path path;
+  final Offset center;
 
-  StarPainter({required this.stars, required this.path});
+  StarPainter({required this.stars, required this.path, required this.center});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -17,7 +18,7 @@ class StarPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final pathPaint = Paint()
-      ..color = Colors.white
+      ..color = Colors.black
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 

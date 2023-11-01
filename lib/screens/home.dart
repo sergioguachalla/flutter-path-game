@@ -20,12 +20,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    stars = generateStars();
+    Size screenSize = MediaQuery.of(context).size;
+    Offset center = Offset(screenSize.width / 2, screenSize.height / 2);
+    stars = generateStarsAroundCenter(center, 5, 150.0);
     return Scaffold(
       body: Row(
         children: [
             CustomPaint(
-              painter: StarPainter(stars: stars, path: path),
+              painter: StarPainter(stars: stars, path: path, center: center),
 
             ),
 
@@ -47,14 +49,20 @@ class _HomeState extends State<Home> {
   }
 
 
-  List<Star> generateStars(){
-    final List<Star> stars = [];
-    Random random = Random();
+  List<Star> generateStarsAroundCenter(Offset center, int numberOfStars, double radiusFromCenter) {
+    List<Star> stars = [];
+    Random rand = Random();
 
-    for (var i = 0; i < 5; i++) {
-      Offset pos = Offset(random.nextInt(500).toDouble(), random.nextInt(500).toDouble());
-      stars.add(Star(position: pos));
+    for (int i = 0; i < numberOfStars; i++) {
+      double randomDX = (rand.nextDouble() * 4 - 1) * radiusFromCenter;
+      double randomDY = (rand.nextDouble() * 3 - 1) * radiusFromCenter;
+
+      double dx = center.dx + randomDX;
+      double dy = center.dy + randomDY;
+
+      stars.add(Star(position: Offset(dx, dy)));
     }
+
     return stars;
   }
 }
